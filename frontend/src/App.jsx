@@ -380,6 +380,12 @@ export default function App() {
     { factor: "AI Authenticity", weight: "3%", cat: "Growth & Integrity", desc: "Heuristic and entropy analysis detecting formulaic generative AI tropes vs authentic human writing." }
   ];
 
+  const navigateTab = (tabName) => {
+    setActiveTab(tabName);
+    setMobileMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleLoadBenchmark = async () => {
     setLoading(true);
     try {
@@ -391,7 +397,7 @@ export default function App() {
           setCandA(details.candidates[0].candidate_id);
           setCandB(details.candidates[6]?.candidate_id || details.candidates[1].candidate_id);
         }
-        setActiveTab('rankings');
+        navigateTab('rankings');
       } else {
         throw new Error("Could not initialize training dataset");
       }
@@ -441,7 +447,7 @@ Responsibilities:
       await resetAll();
       setJobData(null);
       setComparisonResult(null);
-      setActiveTab('rankings');
+      navigateTab('rankings');
     } catch (err) {
       console.error(err);
     } finally {
@@ -515,7 +521,7 @@ Responsibilities:
     if (other) {
       setCandA(candidateAId);
       setCandB(other.candidate_id);
-      setActiveTab('compare');
+      navigateTab('compare');
       handleRunComparison(candidateAId, other.candidate_id);
     }
   };
@@ -546,7 +552,7 @@ Responsibilities:
   };
 
   const handleGoToDetails = (cand) => {
-    setActiveTab('rankings');
+    navigateTab('rankings');
     setExpandedCandIds(prev => new Set(prev).add(cand.id));
     setTimeout(() => {
       const el = document.getElementById(`candidate-row-${cand.id}`);
@@ -598,7 +604,7 @@ Responsibilities:
         setCandA(updatedDetails.candidates[0].candidate_id);
         setCandB(updatedDetails.candidates[1].candidate_id);
       }
-      setActiveTab('rankings');
+      navigateTab('rankings');
       setSelectedFiles([]);
       setUploadedJdFile(null);
       setParsedJdFileName('');
@@ -636,7 +642,7 @@ Responsibilities:
   return (
     <div className="app-root">
       <header className="header-nav">
-        <div className="brand-wrapper" onClick={() => setActiveTab('rankings')} title="Glaux AI Recruiter Platform">
+        <div className="brand-wrapper" onClick={() => navigateTab('rankings')} title="Glaux AI Recruiter Platform">
           <img 
             src="/logo.png" 
             alt="Glaux Logo" 
@@ -646,37 +652,37 @@ Responsibilities:
         <nav className={`nav-tabs-container ${mobileMenuOpen ? 'mobile-open' : ''}`}>
           <button 
             className={`tab-btn ${activeTab === 'rankings' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('rankings'); setMobileMenuOpen(false); }}
+            onClick={() => navigateTab('rankings')}
           >
             <Award size={16} /> Shortlist & Ranking
           </button>
           <button 
             className={`tab-btn ${activeTab === 'compare' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('compare'); if(!comparisonResult) handleRunComparison(); setMobileMenuOpen(false); }}
+            onClick={() => { navigateTab('compare'); if(!comparisonResult) handleRunComparison(); }}
           >
             <Scale size={16} /> Head-to-Head Compare
           </button>
           <button 
             className={`tab-btn ${activeTab === 'matrix' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('matrix'); setMobileMenuOpen(false); }}
+            onClick={() => navigateTab('matrix')}
           >
             <Layers size={16} /> 2D Skills Matrix
           </button>
           <button 
             className={`tab-btn ${activeTab === 'bias' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('bias'); setMobileMenuOpen(false); }}
+            onClick={() => navigateTab('bias')}
           >
             <AlertCircle size={16} /> JD Bias Auditor
           </button>
           <button 
             className={`tab-btn ${activeTab === 'rubrics' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('rubrics'); setMobileMenuOpen(false); }}
+            onClick={() => navigateTab('rubrics')}
           >
             <ShieldCheck size={16} /> Evaluation Rubric
           </button>
           <button 
             className={`tab-btn ${activeTab === 'upload' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('upload'); setMobileMenuOpen(false); }}
+            onClick={() => navigateTab('upload')}
           >
             <UploadCloud size={16} /> Batch Upload
           </button>
@@ -895,7 +901,7 @@ Responsibilities:
                 </button>
               </div>
 
-              <div className="intake-card" onClick={() => setActiveTab('upload')} style={{ cursor: 'pointer' }}>
+              <div className="intake-card" onClick={() => navigateTab('upload')} style={{ cursor: 'pointer' }}>
                 <div>
                   <div className="intake-icon" style={{ background: '#fdf4ff', color: 'var(--brand-purple)' }}>
                     <UploadCloud size={28} />
@@ -907,7 +913,7 @@ Responsibilities:
                   type="button"
                   className="btn-secondary" 
                   style={{ width: '100%', justifyContent: 'center' }}
-                  onClick={(e) => { e.stopPropagation(); setActiveTab('upload'); }}
+                  onClick={(e) => { e.stopPropagation(); navigateTab('upload'); }}
                 >
                   Upload Testing Batch <ArrowRight size={16} />
                 </button>
