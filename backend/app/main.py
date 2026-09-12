@@ -457,11 +457,10 @@ async def ask_rag(
 
 @app.post("/api/seed-full-dataset")
 def seed_full_dataset(db: Session = Depends(get_db)):
-    """Seeds the 18 diverse candidates matching the Google Drive and hackathon PDF specification."""
-    existing = db.query(JobDescription).filter(JobDescription.company == "TechNova Solutions").first()
-    if existing:
-        db.delete(existing)
-        db.commit()
+    db.query(Evaluation).delete()
+    db.query(Candidate).delete()
+    db.query(JobDescription).delete()
+    db.commit()
 
     sample_jd_text = """Job Title: Junior Full Stack Developer Intern
 Company: TechNova Solutions

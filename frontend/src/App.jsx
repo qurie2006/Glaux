@@ -392,12 +392,46 @@ export default function App() {
           setCandB(details.candidates[6]?.candidate_id || details.candidates[1].candidate_id);
         }
         setActiveTab('rankings');
+      } else {
+        throw new Error("Could not initialize training dataset");
       }
     } catch (err) {
       console.error(err);
+      alert("Notice: Could not load training benchmark: " + (err.message || "Please verify backend connectivity on port 8000"));
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePrefillBenchmarkJd = () => {
+    setNewJdTitle('Junior Full Stack Developer Intern');
+    setNewJdCompany('TechNova Solutions');
+    setNewJdText(`Job Title: Junior Full Stack Developer Intern
+Company: TechNova Solutions
+Location: Remote / Hybrid
+
+About Us:
+TechNova Solutions builds scalable cloud-native web applications for modern enterprises. We are seeking a passionate, high-energy Junior Full Stack Developer Intern to join our core product engineering team.
+
+Required Qualifications (Must-Have):
+- Strong proficiency in JavaScript / TypeScript and modern frontend frameworks (React.js preferred).
+- Hands-on experience building backend RESTful APIs using Node.js and Express.
+- Solid foundational understanding of relational or document databases (MongoDB, PostgreSQL).
+- Familiarity with version control using Git and GitHub workflows.
+- Ability to write clean, modular, and testable code with good error handling.
+
+Preferred Qualifications (Nice-to-Have):
+- Experience with containerization technologies such as Docker.
+- Basic understanding of CI/CD pipelines and cloud deployments (AWS, GCP).
+- Familiarity with state management libraries like Redux or modern CSS frameworks like Tailwind.
+- Open-source contributions or demonstrable deployed personal projects.
+
+Responsibilities:
+- Collaborate with senior engineers to implement responsive UI components and backend endpoints.
+- Optimize database queries and API response latencies.
+- Actively participate in sprint ceremonies, code reviews, and architectural discussions.`);
+    setUploadedJdFile(null);
+    setParsedJdFileName('');
   };
 
   const handleReset = async () => {
@@ -849,8 +883,15 @@ export default function App() {
                   <h3>Load Training Benchmark (18 Resumes)</h3>
                   <p>Instantly ingest and rank the official 18 sample training resumes (spanning strong, medium, and weak matches) against the TechNova Intern JD.</p>
                 </div>
-                <button className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
-                  Explore 18 Training Resumes <ArrowRight size={16} />
+                <button 
+                  type="button"
+                  className="btn-primary" 
+                  style={{ width: '100%', justifyContent: 'center' }}
+                  onClick={(e) => { e.stopPropagation(); handleLoadBenchmark(); }}
+                  disabled={loading}
+                >
+                  <RefreshCw size={15} className={loading ? "spin" : ""} />
+                  {loading ? "Loading 18 Resumes..." : "Explore 18 Training Resumes"} <ArrowRight size={16} />
                 </button>
               </div>
 
@@ -862,7 +903,12 @@ export default function App() {
                   <h3>Unseen Testing Batch Ingestion</h3>
                   <p>Paste a custom Job Description and drag-and-drop your unseen test resumes (PDF/DOCX) to evaluate out-of-sample model performance and screening.</p>
                 </div>
-                <button className="btn-secondary" style={{ width: '100%', justifyContent: 'center' }}>
+                <button 
+                  type="button"
+                  className="btn-secondary" 
+                  style={{ width: '100%', justifyContent: 'center' }}
+                  onClick={(e) => { e.stopPropagation(); setActiveTab('upload'); }}
+                >
                   Upload Testing Batch <ArrowRight size={16} />
                 </button>
               </div>
@@ -1831,11 +1877,32 @@ export default function App() {
         )}
         {activeTab === 'upload' && (
           <div className="intake-card" style={{ maxWidth: '880px', margin: '0 auto' }}>
-            <div>
-              <h3 style={{ fontSize: '1.6rem', fontWeight: 800 }}>Upload New Shortlisting Campaign</h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.94rem', marginBottom: '1.75rem' }}>
-                Provide the Job Description and upload multiple PDF or DOCX candidate resumes.
-              </p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
+              <div>
+                <h3 style={{ fontSize: '1.6rem', fontWeight: 800 }}>Upload New Shortlisting Campaign</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.94rem' }}>
+                  Provide the Job Description and upload multiple PDF or DOCX candidate resumes.
+                </p>
+              </div>
+              <div style={{ display: 'flex', gap: '0.6rem' }}>
+                <button 
+                  type="button" 
+                  className="btn-secondary" 
+                  style={{ fontSize: '0.82rem', padding: '0.45rem 0.9rem' }}
+                  onClick={handlePrefillBenchmarkJd}
+                >
+                  <FileText size={14} /> Pre-fill TechNova Benchmark JD
+                </button>
+                <button 
+                  type="button" 
+                  className="btn-primary" 
+                  style={{ fontSize: '0.82rem', padding: '0.45rem 0.9rem' }}
+                  onClick={handleLoadBenchmark}
+                  disabled={loading}
+                >
+                  <RefreshCw size={14} className={loading ? "spin" : ""} /> Load 18 Benchmark Resumes
+                </button>
+              </div>
             </div>
 
             <form onSubmit={handleCreateAndUpload} style={{ display: 'flex', flexDirection: 'column', gap: '1.4rem' }}>
@@ -1939,7 +2006,7 @@ export default function App() {
                 />
                 {selectedFiles.length > 0 && (
                   <div style={{ fontSize: '0.85rem', color: 'var(--brand-primary)', marginTop: '0.5rem', fontWeight: 600 }}>
-                    ✓ {selectedFiles.length} file(s) selected for scoring
+                    ✓ {selectedFiles.length} file(s) selected: {selectedFiles.map(f => f.name).slice(0, 3).join(', ')}{selectedFiles.length > 3 ? ` +${selectedFiles.length - 3} more` : ''}
                   </div>
                 )}
               </div>

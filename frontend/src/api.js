@@ -26,7 +26,10 @@ export async function seedFullDataset() {
   const res = await fetch(`${API_BASE}/seed-full-dataset`, {
     method: "POST"
   });
-  if (!res.ok) throw new Error("Failed to seed benchmark dataset");
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to seed benchmark dataset");
+  }
   return await res.json();
 }
 
@@ -34,7 +37,10 @@ export async function resetAll() {
   const res = await fetch(`${API_BASE}/reset-all`, {
     method: "POST"
   });
-  if (!res.ok) throw new Error("Failed to reset database");
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to reset database");
+  }
   return await res.json();
 }
 
@@ -48,7 +54,10 @@ export async function compareCandidates(jobId, candidateAId, candidateBId) {
       candidate_b_id: candidateBId
     })
   });
-  if (!res.ok) throw new Error("Comparison failed");
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Comparison failed");
+  }
   return await res.json();
 }
 
@@ -61,7 +70,10 @@ export async function askRAG(jobId, query) {
     method: "POST",
     body: formData
   });
-  if (!res.ok) throw new Error("RAG Query failed");
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "RAG Query failed");
+  }
   return await res.json();
 }
 
@@ -95,7 +107,10 @@ export async function createJob(title, company, jdText, jdFile = null) {
     method: "POST",
     body: formData
   });
-  if (!res.ok) throw new Error("Failed to create job");
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Failed to create job");
+  }
   return await res.json();
 }
 
@@ -109,7 +124,10 @@ export async function uploadResumes(jobId, files) {
     method: "POST",
     body: formData
   });
-  if (!res.ok) throw new Error("Resume batch upload failed");
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Resume batch upload failed");
+  }
   return await res.json();
 }
 
