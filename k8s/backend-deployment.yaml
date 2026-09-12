@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: glaux-system
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: glaux-backend:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://glaux:glaux_secret_password@postgres:5432/glaux_shortlist"
+            - name: OLLAMA_URL
+              value: "http://ollama-service:11434"
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: glaux-system
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 8000
+      targetPort: 8000
