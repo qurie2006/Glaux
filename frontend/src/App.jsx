@@ -386,6 +386,23 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleGoToTestingUpload = () => {
+    setActiveTab('upload');
+    setMobileMenuOpen(false);
+    setTimeout(() => {
+      const el = document.getElementById('resume-upload-dropzone') || document.getElementById('resume-file-input');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.classList.add('highlight-candidate-pulse');
+        setTimeout(() => {
+          el.classList.remove('highlight-candidate-pulse');
+        }, 3000);
+      } else {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      }
+    }, 150);
+  };
+
   const handleLoadBenchmark = async () => {
     setLoading(true);
     try {
@@ -901,7 +918,7 @@ Responsibilities:
                 </button>
               </div>
 
-              <div className="intake-card" onClick={() => navigateTab('upload')} style={{ cursor: 'pointer' }}>
+              <div className="intake-card" onClick={handleGoToTestingUpload} style={{ cursor: 'pointer' }}>
                 <div>
                   <div className="intake-icon" style={{ background: '#fdf4ff', color: 'var(--brand-purple)' }}>
                     <UploadCloud size={28} />
@@ -913,7 +930,7 @@ Responsibilities:
                   type="button"
                   className="btn-secondary" 
                   style={{ width: '100%', justifyContent: 'center' }}
-                  onClick={(e) => { e.stopPropagation(); navigateTab('upload'); }}
+                  onClick={(e) => { e.stopPropagation(); handleGoToTestingUpload(); }}
                 >
                   Upload Testing Batch <ArrowRight size={16} />
                 </button>
@@ -1998,21 +2015,30 @@ Responsibilities:
                 </div>
               </div>
 
-              <div>
-                <label style={{ fontSize: '0.8rem', textTransform: 'uppercase', fontWeight: 800, color: 'var(--text-muted)' }}>
+              <div id="resume-upload-dropzone" style={{ background: '#f8fafc', border: '2px dashed #6366f1', borderRadius: '14px', padding: '1.4rem', textAlign: 'center', transition: 'all 0.3s ease' }}>
+                <label style={{ fontSize: '0.82rem', textTransform: 'uppercase', fontWeight: 800, color: 'var(--brand-primary)', display: 'block', marginBottom: '0.4rem' }}>
                   Attach Resumes (PDF / DOCX)
                 </label>
                 <input 
                   type="file" 
+                  id="resume-file-input"
                   multiple 
                   accept=".pdf,.docx,.txt" 
-                  className="rag-text-input" 
-                  style={{ width: '100%', marginTop: '0.35rem' }}
+                  style={{ display: 'none' }}
                   onChange={e => setSelectedFiles(Array.from(e.target.files))}
                 />
+                <label htmlFor="resume-file-input" style={{ cursor: 'pointer', display: 'block' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', color: 'var(--brand-primary)', fontWeight: 700, fontSize: '1rem', marginBottom: '0.3rem' }}>
+                    <UploadCloud size={24} />
+                    <span>Click to Browse or Drag & Drop Multiple Resumes</span>
+                  </div>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: 0 }}>
+                    Select multiple PDF, DOCX, or text resumes from your computer for instant scoring and ranking.
+                  </p>
+                </label>
                 {selectedFiles.length > 0 && (
-                  <div style={{ fontSize: '0.85rem', color: 'var(--brand-primary)', marginTop: '0.5rem', fontWeight: 600 }}>
-                    ✓ {selectedFiles.length} file(s) selected: {selectedFiles.map(f => f.name).slice(0, 3).join(', ')}{selectedFiles.length > 3 ? ` +${selectedFiles.length - 3} more` : ''}
+                  <div style={{ marginTop: '0.8rem', padding: '0.6rem 1rem', background: '#e0e7ff', color: '#3730a3', borderRadius: '10px', fontSize: '0.88rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Check size={16} /> {selectedFiles.length} file(s) selected: {selectedFiles.map(f => f.name).slice(0, 3).join(', ')}{selectedFiles.length > 3 ? ` +${selectedFiles.length - 3} more` : ''}
                   </div>
                 )}
               </div>
