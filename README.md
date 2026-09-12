@@ -1,4 +1,4 @@
-a# 🦉 Glaux — Explainable AI Recruiter Platform
+# 🦉 Glaux — Explainable AI Recruiter Platform
 
 > **Precision, Bias-Free, and Explainable Candidate Evaluation Platform**  
 > Powered by an 11-Factor Mathematical Scoring Matrix, Grounded RAG, and Interactive Cohort Intelligence.
